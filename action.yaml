@@ -1,0 +1,54 @@
+name: "guardian/actions-s3"
+description: "Deploy some files to S3 (via Riffraff). Files are prefixed with /:STAGE/:stack/:app. Useful if you have simple requirements."
+inputs:
+  app:
+    description: "App name (pattern: [a-zA-Z-]+)."
+    required: true
+  stack:
+    description: "A (Riffraff) stack to deploy into, e.g. 'deploy', 'frontend', etc. See Riffraff for the full list of supported stacks."
+    required: true
+  contentDirectory:
+    description: "Path to directory or individual file."
+    required: true
+  bucketSsmKey:
+    description: "SSM Key with value of the target bucket"
+    default: /account/services/artifact.bucket
+  cacheControl:
+    description: "Cache control - see Riffraff docs for valid values here. Default is 'no-store' (i.e. no caching at all)."
+    default: no-store
+  guActionsRiffRaffRoleArn:
+    description: "Role to use for writing to Riffraff's AWS bucket (typically org secret of same name)."
+    required: true
+  dryRun:
+    description: "If set to true, will not upload Riffraff artifact."
+    default: false
+runs:
+  # Note composite steps do not have direct access to secrets, or inputs (via
+  # env) so need to be passed them explicitly :(. Sad times I know.
+  using: "composite"
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ inputs.guActionsRiffRaffRoleArn }}
+
+    - uses: guardian/actions-riff-raff@v2
+      with:
+        app: ${{ inputs.app }}
+        dryRun: ${{ inputs.dryRun }}
+        contentDirectories: |
+          s3: [${{ inputs.contentDirectory }}]
+        config: |
+          stacks:
+            - ${{ inputs.stack }}
+          regions:
+            - eu-west-1
+          deployments:
+            s3:
+              type: aws-s3
+              app: ${{ inputs.app }}
+              parameters:
+                prefixApp: true
+                bucketSsmKey: ${{ inputs.bucketSsmKey }}
+                publicReadAcl: false
+                cacheControl: ${{ inputs.cacheControl }}

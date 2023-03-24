@@ -1,0 +1,24 @@
+name: test
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        with:
+          app: actions-s3-test-stack
+          stack: deploy
+          contentDirectory: example-file.txt
+          guActionsRiffRaffRoleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
