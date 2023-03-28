@@ -11,7 +11,7 @@ have simple requirements and want to avoid manual uploads.
 Example usage:
 
 ```yaml
-- uses: guardian/actions-cloudformation@v1
+- uses: guardian/actions-s3@v1
   with:
     app: example
     stack: some-stack
