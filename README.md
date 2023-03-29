@@ -17,6 +17,7 @@ Example usage:
     stack: some-stack
     contentDirectory: my-assets-dir
     # Override the below if required:
+    # allowedStages: '["CODE", "PROD"]'
     # cacheControl: no-store
     # bucketSsmKey: /account/services/artifact.bucket
     guActionsRiffRaffRoleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}

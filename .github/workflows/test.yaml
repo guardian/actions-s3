@@ -20,5 +20,6 @@ jobs:
         with:
           app: actions-s3-test-stack
           stack: deploy
+          allowedStages: '["INFRA"]'
           contentDirectory: example-file.txt
           guActionsRiffRaffRoleArn: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
