@@ -16,6 +16,9 @@ inputs:
   cacheControl:
     description: "Cache control - see Riffraff docs for valid values here. Default is 'no-store' (i.e. no caching at all)."
     default: no-store
+  allowedStages:
+    description: Riffraff allowed stages. Note, inputs must be a string, so write as e.g. '["INFRA"]'.
+    default: '["CODE", "PROD"]'
   guActionsRiffRaffRoleArn:
     description: "Role to use for writing to Riffraff's AWS bucket (typically org secret of same name)."
     required: true
@@ -43,6 +46,7 @@ runs:
             - ${{ inputs.stack }}
           regions:
             - eu-west-1
+          allowedStages: ${{ inputs.allowedStages }}
           deployments:
             s3:
               type: aws-s3
